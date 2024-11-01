@@ -12,7 +12,6 @@ npm install pulseflowjs
 
 Overview of Included Files
 1. barnesInterpolation.ts
-Description
 The barnesInterpolation.ts file contains the implementation of the Barnes Interpolation algorithm. This method is used for spatial data analysis and can be utilized to interpolate data points based on a weighted distance approach. It is particularly beneficial for processing irregularly spaced data and creating smoother surfaces in data visualization.
 
 Key Features
@@ -34,7 +33,6 @@ console.log(interpolatedGrid);
 ```
 
 2. cubicInterpolation.ts
-Description
 The cubicInterpolation.ts file provides an implementation for Cubic Interpolation. This interpolation method is utilized for creating a smooth curve that passes through a set of data points, offering higher accuracy compared to linear interpolation. It’s ideal for applications where maintaining smooth transitions between points is essential, such as in animations, graphical rendering, and data analysis.
 
 Key Features
