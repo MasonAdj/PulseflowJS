@@ -33,37 +33,43 @@ export function barnesInterpolation(
   kappa: number,  // Smoothing parameter
   passes: number = 1  // Number of refinement passes (default 1)
 ): { U: number, V: number } {
+  // Ensure passes is at least 1
+  if (passes < 1) {
+    passes = 1;
+  }
+
   let interpolatedU = 0;
   let interpolatedV = 0;
 
   // Perform multiple passes if required
   for (let pass = 0; pass < passes; pass++) {
-      // Initialize sums for weighted average
-      let sumWeightedU = 0;
-      let sumWeightedV = 0;
-      let sumWeights = 0;
+    // Initialize sums for weighted average
+    let sumWeightedU = 0;
+    let sumWeightedV = 0;
+    let sumWeights = 0;
 
-      // Iterate over known points
-      for (const point of knownPoints) {
-          // Calculate the distance between the known point and the target point
-          const distance = haversineDistance(point.lat, point.lon, targetLat, targetLon);
+    // Iterate over known points
+    for (const point of knownPoints) {
+      // Calculate the distance between the known point and the target point
+      const distance = haversineDistance(point.lat, point.lon, targetLat, targetLon);
 
-          // Calculate the weight for this point based on the distance
-          const weight = gaussianWeight(distance, kappa);
+      // Calculate the weight for this point based on the distance
+      const weight = gaussianWeight(distance, kappa);
 
-          // Convert wind speed and direction to U and V components
-          const { U, V } = windToComponents(point.speedKnots, point.directionDegrees);
+      // Convert wind speed and direction to U and V components
+      const { U, V } = windToComponents(point.speedKnots, point.directionDegrees);
 
-          // Update weighted sum of U and V components and total weight
-          sumWeightedU += U * weight;
-          sumWeightedV += V * weight;
-          sumWeights += weight;
-      }
+      // Update weighted sum of U and V components and total weight
+      sumWeightedU += U * weight;
+      sumWeightedV += V * weight;
+      sumWeights += weight;
+    }
 
-      // Calculate the interpolated U and V as the weighted average
-      interpolatedU = sumWeightedU / sumWeights;
-      interpolatedV = sumWeightedV / sumWeights;
+    // Calculate the interpolated U and V as the weighted average
+    interpolatedU = sumWeightedU / sumWeights;
+    interpolatedV = sumWeightedV / sumWeights;
   }
 
   return { U: interpolatedU, V: interpolatedV };
 }
+
