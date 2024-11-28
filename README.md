@@ -6,6 +6,15 @@ PulseFlowJS is a JavaScript library designed to provide a suite of advanced algo
 
 The PulseFlowJS library includes the following core functionality:
 
+### Table of Contents
+
+- [Gaussian Algorithms](gaussianAlgorithms.md)
+- [Map Distances](mapDistances.md)
+- [Cubic Interpolation](cubicInterpolation.md)
+- [Barnes Interpolation](barnesInterpolation.md)
+- [Unit Conversions](unitConversions.md)
+
+
 ### 1. **Gaussian Algorithms**
 - **Gaussian Distribution**: Functions to work with Gaussian (normal) distributions, including calculating the probability density function (PDF), kernel functions, and weighted values.
 - **Kalman Filtering**: Implements the Kalman filter, a method used for estimation in the presence of noise, with updates to state estimates based on measurements.
