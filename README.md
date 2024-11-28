@@ -28,14 +28,8 @@ The PulseFlowJS library includes the following core functionality:
 
 ## Installation
 
-To install PulseFlowJS, use npm or yarn:
+To install PulseFlowJS, use npm:
 
 ```bash
 npm install pulseflowjs
-```
-## Usage
-Once installed, you can import the required functions into your JavaScript code:
-
-```javascript
-import { gaussianPDF, haversineDistance, cubicInterpolate } from 'pulseflowjs';
 ```
