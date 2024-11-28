@@ -3,7 +3,7 @@ import {
   biCubicInterpolate,
   triCubicInterpolate,
   nCubicInterpolate,
-} from "./src/cubicInterpolation";
+} from "../src/cubicInterpolation";
 describe("Cubic Interpolation Functions", () => {
   test("cubicInterpolate should correctly identify known values", () => {
     const p = [1, 2, 3, 4];

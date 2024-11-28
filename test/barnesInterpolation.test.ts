@@ -1,212 +1,19 @@
 import {
-  haversineDistance,
-  gaussianWeight,
   windToComponents,
   barnesInterpolation,
-  toRadians,
-} from "./src/barnesInterpolation";
+  barnesGrid,
+} from "../src/barnesInterpolation";
+import { degreesToRadians } from "../src/unitConversion";
+import { haversineDistance } from "../src/mapDistances";
+import { testData } from "./testData";
+import { gaussianWeight } from "../src/gaussianAlgorithms";
 
-// Marker data with wind speed, angle, and typed coordinates within Savannah, Georgia
-const testData = [
-  {
-    coords: [32.096, -81.095] as [number, number],
-    name: "Sensor Tower 5",
-    speed: 22,
-    angle: 358,
-  },
-  {
-    coords: [32.095, -81.12] as [number, number],
-    name: "Sensor Tower 6",
-    speed: 28,
-    angle: 345,
-  },
-  {
-    coords: [32.093, -81.085] as [number, number],
-    name: "Sensor Tower 14",
-    speed: 24,
-    angle: 348,
-  },
-  {
-    coords: [32.0915, -81.111] as [number, number],
-    name: "Sensor Tower 20",
-    speed: 280,
-    angle: 347,
-  },
-  {
-    coords: [32.09, -81.13] as [number, number],
-    name: "Sensor Tower 10",
-    speed: 26,
-    angle: 345,
-  },
-  {
-    coords: [32.0865, -81.106] as [number, number],
-    name: "Sensor Tower 17",
-    speed: 21,
-    angle: 340,
-  },
-  {
-    coords: [32.085, -81.08] as [number, number],
-    name: "Sensor Tower 9",
-    speed: 21,
-    angle: 337,
-  },
-  {
-    coords: [32.0835, -81.0998] as [number, number],
-    name: "Sensor Tower 1",
-    speed: 24,
-    angle: 349,
-  },
-  {
-    coords: [32.082, -81.118] as [number, number],
-    name: "Sensor Tower 15",
-    speed: 27,
-    angle: 350,
-  },
-  {
-    coords: [32.0785, -81.135] as [number, number],
-    name: "Sensor Tower 13",
-    speed: 25,
-    angle: 330,
-  },
-  {
-    coords: [32.0765, -81.11] as [number, number],
-    name: "Sensor Tower 11",
-    speed: 23,
-    angle: 353,
-  },
-  {
-    coords: [32.0745, -81.089] as [number, number],
-    name: "Sensor Tower 16",
-    speed: 26,
-    angle: 343,
-  },
-  {
-    coords: [32.075, -81.127] as [number, number],
-    name: "Sensor Tower 19",
-    speed: 20,
-    angle: 325,
-  },
-  {
-    coords: [32.0725, -81.07] as [number, number],
-    name: "Sensor Tower 7",
-    speed: 25,
-    angle: 300,
-  },
-  {
-    coords: [32.07, -81.12] as [number, number],
-    name: "Sensor Tower 2",
-    speed: 26,
-    angle: 345,
-  },
-  {
-    coords: [32.0675, -81.098] as [number, number],
-    name: "Sensor Tower 18",
-    speed: 24,
-    angle: 320,
-  },
-  {
-    coords: [32.066, -81.113] as [number, number],
-    name: "Sensor Tower 12",
-    speed: 22,
-    angle: 297,
-  },
-  {
-    coords: [32.065, -81.06] as [number, number],
-    name: "Sensor Tower 23",
-    speed: 24,
-    angle: 310,
-  },
-  {
-    coords: [32.063, -81.07] as [number, number],
-    name: "Sensor Tower 24",
-    speed: 23,
-    angle: 300,
-  },
-  {
-    coords: [32.062, -81.088] as [number, number],
-    name: "Sensor Tower 3",
-    speed: 23,
-    angle: 305,
-  },
-  {
-    coords: [32.06, -81.1] as [number, number],
-    name: "Sensor Tower 8",
-    speed: 20,
-    angle: 294,
-  },
-  {
-    coords: [32.06, -81.055] as [number, number],
-    name: "Sensor Tower 27",
-    speed: 27,
-    angle: 290,
-  },
-  {
-    coords: [32.058, -81.105] as [number, number],
-    name: "Sensor Tower 4",
-    speed: 27,
-    angle: 300,
-  },
-  {
-    coords: [32.057, -81.08] as [number, number],
-    name: "Sensor Tower 25",
-    speed: 21,
-    angle: 315,
-  },
-  {
-    coords: [32.055, -81.05] as [number, number],
-    name: "Sensor Tower 22",
-    speed: 26,
-    angle: 294,
-  },
-  {
-    coords: [32.052, -81.065] as [number, number],
-    name: "Sensor Tower 26",
-    speed: 25,
-    angle: 307,
-  },
-  {
-    coords: [32.05, -81.06] as [number, number],
-    name: "Sensor Tower 21",
-    speed: 22,
-    angle: 290,
-  },
-];
 describe("wind-related calculations", () => {
-  it("should correctly convert degrees to radians", () => {
-    let result = toRadians(testData[0].angle);
-    //This is the number I got from my calculator, the received data adds more decimal points than I had, so I used toBeCloseTo
-    expect(result).toBeCloseTo(6.24827872214);
-  });
-
-  it("should correctly convert wind speed and direction to U and V components", () => {
-    testData.forEach((marker) => {
-      const { speed, angle } = marker;
-      const { U, V } = windToComponents(speed, angle);
-
-      // Verify U and V components using expected trigonometric transformations
-      expect(U).toBeCloseTo(speed * Math.sin(toRadians(angle)));
-      expect(V).toBeCloseTo(speed * Math.cos(toRadians(angle)));
-    });
-  });
-
   it("should correctly convert wind speed and direction to U and V components compared to manually calculated values", () => {
     const { U, V } = windToComponents(testData[0].speed, testData[0].angle);
     // These are the numbers I got from my calculator, the received data adds more decimal points than I had, so I used toBeCloseTo
     expect(U).toBeCloseTo(-0.76778892744);
     expect(V).toBeCloseTo(21.9865981944);
-  });
-
-  it("should calculate the correct distances between marker pairs", () => {
-    const [marker1, marker2] = [testData[0], testData[1]];
-    const distance = haversineDistance(
-      marker1.coords[0],
-      marker1.coords[1],
-      marker2.coords[0],
-      marker2.coords[1]
-    );
-
-    //This is the number I got from my calculator, the received data adds more decimal points than I had, so I used toBeCloseTo
-    expect(distance).toBeCloseTo(2.4, 1);
   });
 
   it("should calculate accurate Gaussian weights based on distances", () => {
@@ -249,7 +56,7 @@ describe("wind-related calculations", () => {
       const weight = gaussianWeight(distance, kappa);
 
       // Convert wind speed and direction to U and V components
-      const radianAngle = toRadians(point.directionDegrees);
+      const radianAngle = degreesToRadians(point.directionDegrees);
       const U = point.speedKnots * Math.sin(radianAngle); // East-West component
       const V = point.speedKnots * Math.cos(radianAngle); // North-South component
 
@@ -308,7 +115,7 @@ describe("wind-related calculations", () => {
         );
         const weight = gaussianWeight(distance, kappa);
 
-        const radianAngle = toRadians(point.directionDegrees);
+        const radianAngle = degreesToRadians(point.directionDegrees);
         const U = point.speedKnots * Math.sin(radianAngle);
         const V = point.speedKnots * Math.cos(radianAngle);
 
@@ -366,7 +173,7 @@ describe("wind-related calculations", () => {
         );
         const weight = gaussianWeight(distance, kappa);
 
-        const radianAngle = toRadians(point.directionDegrees);
+        const radianAngle = degreesToRadians(point.directionDegrees);
         const U = point.speedKnots * Math.sin(radianAngle);
         const V = point.speedKnots * Math.cos(radianAngle);
 
@@ -424,7 +231,7 @@ describe("wind-related calculations", () => {
         );
         const weight = gaussianWeight(distance, kappa);
 
-        const radianAngle = toRadians(point.directionDegrees);
+        const radianAngle = degreesToRadians(point.directionDegrees);
         const U = point.speedKnots * Math.sin(radianAngle);
         const V = point.speedKnots * Math.cos(radianAngle);
 
@@ -482,7 +289,7 @@ describe("wind-related calculations", () => {
         );
         const weight = gaussianWeight(distance, kappa);
 
-        const radianAngle = toRadians(point.directionDegrees);
+        const radianAngle = degreesToRadians(point.directionDegrees);
         const U = point.speedKnots * Math.sin(radianAngle);
         const V = point.speedKnots * Math.cos(radianAngle);
 
@@ -505,5 +312,112 @@ describe("wind-related calculations", () => {
     // Compare the function's output to the manually calculated expected values
     expect(U).toBeCloseTo(interpolatedU, 2);
     expect(V).toBeCloseTo(interpolatedV, 2);
+  });
+});
+
+describe("barnesGrid function", () => {
+  it("should generate a grid of interpolated wind vectors", () => {
+    const gridBounds = {
+      minLat: 32.05,
+      minLon: -81.13,
+      maxLat: 32.1,
+      maxLon: -81.05,
+    };
+
+    const gridSizeKm = 5; // Grid spacing of 5 km
+    const kappa = 2; // Smoothing parameter
+    const passes = 1; // Single interpolation pass
+
+    const result = barnesGrid(
+      testData.map(({ coords, speed, angle }) => ({
+        lat: coords[0],
+        lon: coords[1],
+        speedKnots: speed,
+        directionDegrees: angle,
+      })),
+      gridBounds,
+      gridSizeKm,
+      kappa,
+      passes
+    );
+
+    // Validate the grid size
+    const expectedGridPoints =
+      Math.ceil((gridBounds.maxLat - gridBounds.minLat) / (gridSizeKm / 111)) *
+      Math.ceil((gridBounds.maxLon - gridBounds.minLon) / (gridSizeKm / 111));
+    expect(result).toHaveLength(expectedGridPoints);
+
+    // Check a few properties of grid points
+    result.forEach((point) => {
+      expect(point).toHaveProperty("coords");
+      expect(point).toHaveProperty("speed");
+      expect(point).toHaveProperty("angle");
+      expect(point.coords[0]).toBeGreaterThanOrEqual(gridBounds.minLat);
+      expect(point.coords[0]).toBeLessThanOrEqual(gridBounds.maxLat);
+      expect(point.coords[1]).toBeGreaterThanOrEqual(gridBounds.minLon);
+      expect(point.coords[1]).toBeLessThanOrEqual(gridBounds.maxLon);
+    });
+
+    // Validate specific points (for known behavior)
+    const firstPoint = result[0];
+    expect(firstPoint.coords[0]).toBeCloseTo(gridBounds.minLat, 5);
+    expect(firstPoint.coords[1]).toBeCloseTo(gridBounds.minLon, 5);
+    expect(firstPoint.speed).toBeGreaterThan(0);
+    expect(firstPoint.angle).toBeGreaterThanOrEqual(0);
+    expect(firstPoint.angle).toBeLessThan(360);
+  });
+
+  it("should handle cases with no input points", () => {
+    const gridBounds = {
+      minLat: 32.05,
+      minLon: -81.13,
+      maxLat: 32.1,
+      maxLon: -81.05,
+    };
+
+    const gridSizeKm = 5;
+    const kappa = 2;
+    const passes = 1;
+
+    const result = barnesGrid([], gridBounds, gridSizeKm, kappa, passes);
+    expect(result[0].angle).toBeNaN();
+    expect(result[0].speed).toBeNaN()
+  });
+
+  it("should handle a single input point", () => {
+    const gridBounds = {
+      minLat: 32.05,
+      minLon: -81.13,
+      maxLat: 32.1,
+      maxLon: -81.05,
+    };
+
+    const gridSizeKm = 5;
+    const kappa = 2;
+    const passes = 1;
+
+    const singlePoint = [
+      {
+        lat: 32.09,
+        lon: -81.12,
+        speedKnots: 26,
+        directionDegrees: 345,
+      },
+    ];
+
+    const result = barnesGrid(
+      singlePoint,
+      gridBounds,
+      gridSizeKm,
+      kappa,
+      passes
+    );
+    expect(result).not.toHaveLength(0);
+
+    result.forEach((point) => {
+      expect(point.speed).toBeGreaterThan(0);
+      expect(point.angle).toBeGreaterThanOrEqual(0);
+      expect(point.angle).toBeLessThan(360);
+    });
   });
 });

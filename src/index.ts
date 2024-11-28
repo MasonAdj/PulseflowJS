@@ -1,16 +1,9 @@
-// Re-exporting functions from barnesInterpolation.ts
-export { 
-  toRadians, 
-  haversineDistance, 
-  gaussianWeight, 
-  windToComponents, 
-  barnesInterpolation 
-} from './barnesInterpolation';
+export * from "./barnesInterpolation";
 
-// Re-exporting functions from cubicInterpolation.ts
-export { 
-  cubicInterpolate, 
-  biCubicInterpolate, 
-  triCubicInterpolate, 
-  nCubicInterpolate 
-} from './cubicInterpolation';
+export * from "./cubicInterpolation";
+
+export * from "./unitConversion";
+
+export * from "./mapDistances"
+
+export * from "./gaussianAlgorithms"

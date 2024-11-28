@@ -1,54 +1,41 @@
-# PulseFlowJS
+# PulseFlowJS Library
 
-**PulseFlowJS** is an npm package designed to handle various types of data interpolation techniques in TypeScript. This package currently includes implementations for Barnes Interpolation and Cubic Interpolation.
+PulseFlowJS is a JavaScript library designed to provide a suite of advanced algorithms and mathematical tools for working with data. It includes functions for statistical analysis, spatial interpolation, and various techniques commonly used in data science, machine learning, and meteorological applications. The library aims to make complex calculations more accessible with easy-to-use, well-documented functions.
+
+## Features
+
+The PulseFlowJS library includes the following core functionality:
+
+### 1. **Gaussian Algorithms**
+- **Gaussian Distribution**: Functions to work with Gaussian (normal) distributions, including calculating the probability density function (PDF), kernel functions, and weighted values.
+- **Kalman Filtering**: Implements the Kalman filter, a method used for estimation in the presence of noise, with updates to state estimates based on measurements.
+- **Gaussian Smoothing & Naive Bayes**: Methods for smoothing data with Gaussian kernels and calculating likelihoods using the Gaussian Naive Bayes model.
+
+### 2. **Map Distances**
+- **Haversine Distance**: A function to calculate the shortest distance between two points on the Earth's surface, based on latitude and longitude.
+- **Random Point Generation**: Methods to generate random points within a specific radius from a given geographical location.
+- **Standard Deviation of Distances**: Functions to calculate the standard deviation of distances between points and assess the spatial distribution of data.
+- **Probability Boundaries**: Tools for calculating the probabilities within certain distance boundaries, based on standard deviation.
+
+### 3. **Cubic Interpolation**
+- **Cubic Interpolation**: Provides interpolation methods for estimating values between data points in 1D, 2D, 3D, and n-dimensional spaces. These methods offer smooth, continuous transitions between points.
+- **Multi-dimensional Interpolation**: Extends cubic interpolation to multiple dimensions, such as bi-cubic (2D), tri-cubic (3D), and n-dimensional cubic interpolation, useful for complex data analysis in fields like graphics and volumetric data.
+
+### 4. **Barnes Interpolation**
+- **Wind Vector Analysis**: Tools for converting wind speed and direction into their orthogonal U and V components for meteorological analysis.
+- **Barnes Interpolation**: A method to estimate wind vector components at unknown points based on surrounding known data, applying Gaussian smoothing to ensure more accurate and smooth estimates.
+- **Barnes Grid Generation**: Methods to create a grid of interpolated wind data, providing wind speed and direction estimates over a defined geographic area.
 
 ## Installation
 
-To install the **PulseFlowJS** package, use the following command:
+To install PulseFlowJS, use npm or yarn:
 
 ```bash
 npm install pulseflowjs
 ```
+## Usage
+Once installed, you can import the required functions into your JavaScript code:
 
-Overview of Included Files
-1. barnesInterpolation.ts
-Description
-The barnesInterpolation.ts file contains the implementation of the Barnes Interpolation algorithm. This method is used for spatial data analysis and can be utilized to interpolate data points based on a weighted distance approach. It is particularly beneficial for processing irregularly spaced data and creating smoother surfaces in data visualization.
-
-Key Features
-Applies the Barnes interpolation technique for spatial data smoothing.
-Provides flexible configuration for the user to modify parameters, such as influence radii and convergence thresholds.
-Efficiently handles both small and large datasets.
-
-Usage Example
-```typescript
-import { barnesInterpolation } from 'pulseflowjs';
-
-const dataPoints = [
-  { x: 10, y: 15, value: 2.5 },
-  { x: 20, y: 25, value: 3.5 },
-];
-
-const interpolatedGrid = barnesInterpolation(dataPoints, { radius: 5, iterations: 3 });
-console.log(interpolatedGrid);
-```
-
-2. cubicInterpolation.ts
-Description
-The cubicInterpolation.ts file provides an implementation for Cubic Interpolation. This interpolation method is utilized for creating a smooth curve that passes through a set of data points, offering higher accuracy compared to linear interpolation. It’s ideal for applications where maintaining smooth transitions between points is essential, such as in animations, graphical rendering, and data analysis.
-
-Key Features
-Implements cubic spline interpolation for smooth data transition.
-Supports multi-dimensional data arrays for more complex interpolation requirements.
-Customizable boundary conditions and coefficients to suit varied application needs.
-
-Usage Example
-```typescript
-import { cubicInterpolation } from 'pulseflowjs';
-
-// Example usage for cubic interpolation
-const dataPoints = [0, 1, 4, 9, 16, 25]; // y-values corresponding to x-values
-
-const interpolatedValue = cubicInterpolation(dataPoints, 2.5); // interpolate at x = 2.5
-console.log(interpolatedValue);
+```javascript
+import { gaussianPDF, haversineDistance, cubicInterpolate } from 'pulseflowjs';
 ```
