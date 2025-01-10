@@ -31,9 +31,6 @@ export function edgeDetection(imageData: Uint8Array): Uint8Array {
     const edgeData = new Uint8ClampedArray(pixelData.length);
 
     const getGray = (x: number, y: number): number => {
-        if (x < 0 || y < 0 || x >= width || y >= height) {
-            return 0;
-        }
         const idx = (y * width + x) * 3;
         return pixelData[idx];
     };
