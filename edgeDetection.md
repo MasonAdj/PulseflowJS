@@ -44,14 +44,6 @@ This segment provides a function for performing edge detection on PPM images (P6
 4. **Output Creation**:
    - Combines the processed pixel data with a new PPM header to create the output image.
 
-### Example PPM Header
-
-The PPM header for the `P6` format includes:
-```
-P6
-<width> <height>
-255
-```
 
 ### Notes
 
