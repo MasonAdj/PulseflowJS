@@ -13,6 +13,7 @@ The PulseFlowJS library includes the following core functionality:
 - [Cubic Interpolation](cubicInterpolation.md)
 - [Barnes Interpolation](barnesInterpolation.md)
 - [Unit Conversions](unitConversions.md)
+- [Edge Detection](edgeDetection.md)
 
 ### 1. **Gaussian Algorithms**
 
@@ -52,6 +53,11 @@ PulseFlowJS provides an extensive set of unit conversion functions across multip
 - **Math**: Degrees to radians, radians to degrees, and more.
 
 These unit conversion functions ensure that data can be easily transformed to the required units for use in other algorithms or applications.
+
+### 6. **Edge Detection**
+
+Edge detection in PulseFlowJS uses the Sobel operator to highlight edges in binary PPM images. The function first converts images to grayscale, then applies horizontal and vertical gradient calculations to determine edge intensity. This produces a processed image in the same PPM format, emphasizing edges in the original data. This functionality currently only supports PPM images in the P6 format and utilizes fixed Sobel operator weights.
+
 
 ## Installation
 
