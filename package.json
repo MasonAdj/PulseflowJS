@@ -29,12 +29,7 @@
   },
   "homepage": "https://github.com/MasonAdj/Pulseflow#readme",
   "exports": {
-  "./barnesInterpolation": "./dist/barnesInterpolation.js",
-  "./cubicInterpolation": "./dist/cubicInterpolation.js",
-  "./unitConversion": "./dist/unitConversion.js",
-  "./mapDistances": "./dist/mapDistances.js",
-  "./gaussianAlgorithms": "./dist/gaussianAlgorithms.js",
-  "./edgeDetection": "./dist/edgeDetection.js"
+    ".": "./dist/index.js"
 }
 
 }
