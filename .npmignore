@@ -1,8 +1,9 @@
 node_modules
-notReady
+notReady/
 test/
 __tests__/
 *.spec.ts
 *.test.ts
 jest.config.js
 .git
+delete-me-before-publish/

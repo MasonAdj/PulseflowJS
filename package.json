@@ -1,6 +1,6 @@
 {
   "name": "pulseflowjs",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -27,5 +27,14 @@
   "bugs": {
     "url": "https://github.com/MasonAdj/Pulseflow/issues"
   },
-  "homepage": "https://github.com/MasonAdj/Pulseflow#readme"
+  "homepage": "https://github.com/MasonAdj/Pulseflow#readme",
+  "exports": {
+  "./barnesInterpolation": "./dist/barnesInterpolation.js",
+  "./cubicInterpolation": "./dist/cubicInterpolation.js",
+  "./unitConversion": "./dist/unitConversion.js",
+  "./mapDistances": "./dist/mapDistances.js",
+  "./gaussianAlgorithms": "./dist/gaussianAlgorithms.js",
+  "./edgeDetection": "./dist/edgeDetection.js"
+}
+
 }

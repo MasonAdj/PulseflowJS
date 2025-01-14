@@ -1,11 +1,11 @@
-export * from "./barnesInterpolation";
+export {windToComponents, barnesInterpolation, barnesGrid} from "./barnesInterpolation";
 
-export * from "./cubicInterpolation";
+export { cubicInterpolate, biCubicInterpolate, triCubicInterpolate, nCubicInterpolate} from "./cubicInterpolation";
 
-export * from "./unitConversion";
+export {kilometersToMiles, milesToKilometers, mphToKph, kphToMph, knotsToKph, kphToKnots, mphToKnots, knotsToMph, fahrenheitToCelsius, celsiusToFahrenheit, celsiusToKelvin, kelvinToCelsius, fahrenheitToKelvin, kelvinToFahrenheit, kgToLbs, lbsToKg, metersToFeet, feetToMeters, squareFeetToSquareMeters, squareMetersToSquareFeet, litersToGallons, gallonsToLiters, degreesToRadians, radiansToDegrees, kilometersToDegrees} from "./unitConversion";
 
-export * from "./mapDistances"
+export {haversineDistance, generateRandomPoint, calcStandardDeviationOfDistances, calcStandardDeviationOfDistancesProbabilities} from "./mapDistances"
 
-export * from "./gaussianAlgorithms"
+export {gaussianPDF, kalmanFilterStep, gaussianWeight, gaussianNaiveBayes, gaussianQuadrature} from "./gaussianAlgorithms"
 
-export * from "./edgeDetection"
+export {edgeDetection} from "./edgeDetection"
