@@ -98,3 +98,27 @@ numPoints: number
   console.log(result.boundaries); // [30.6, 32.1, 33.6, 35.1]
   console.log(result.probabilities); // [25.0, 45.0, 20.0, 10.0]
   ```
+
+### `getAzimuth(
+lat1Deg: number, 
+lon1Deg: number,
+lat2Deg: number,
+lon2Deg: number): 
+number`
+
+- **Description**: Calculates the initial bearing (azimuth) from the first location to the second location. The bearing is returned in degrees, normalized to the range [0, 360]..
+- **Inputs**:
+  - `lat1Deg` (number): Latitude of the starting point in degrees.
+  - `lon1Deg` (number): Longitude of the starting point in degrees.
+  - `lat2Deg` (number): Latitude of the destination point in degrees.
+  - `lat2Deg` (number): Longitude of the destination point in degrees.
+- **Outputs**:
+  - A number representing the bearing in degrees, where 0 is north, 90 is east, 180 is south, and 270 is west.
+- **Example**:
+  ```javascript
+  import { getAzimuth } from "pulseflowjs";
+
+  const bearing = getAzimuth(52.2296756, 21.0122287, 41.89193, 12.51133);
+  console.log(bearing); // e.g. 170.78
+
+  ```

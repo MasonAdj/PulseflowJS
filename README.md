@@ -27,6 +27,7 @@ The PulseFlowJS library includes the following core functionality:
 - **Random Point Generation**: Methods to generate random points within a specific radius from a given geographical location.
 - **Standard Deviation of Distances**: Functions to calculate the standard deviation of distances between points and assess the spatial distribution of data.
 - **Probability Boundaries**: Tools for calculating the probabilities within certain distance boundaries, based on standard deviation.
+- **Get Azimuth**: Calculates the initial bearing (azimuth) in degrees from one geographic point to another.
 
 ### 3. **Cubic Interpolation**
 
@@ -56,7 +57,7 @@ These unit conversion functions ensure that data can be easily transformed to th
 
 ### 6. **Edge Detection**
 
-Edge detection in PulseFlowJS uses the Sobel operator to highlight edges in binary PPM images. The function first converts images to grayscale, then applies horizontal and vertical gradient calculations to determine edge intensity. This produces a processed image in the same PPM format, emphasizing edges in the original data. This functionality currently only supports PPM images in the P6 format and utilizes fixed Sobel operator weights.
+Performs Sobel-based edge detection on either P6 PPM data or Canvas ImageData, optionally applying a binary threshold.
 
 
 ## Installation

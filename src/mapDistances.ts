@@ -1,4 +1,4 @@
-import { degreesToRadians, kilometersToDegrees } from "./unitConversion";
+import { degreesToRadians, kilometersToDegrees, radiansToDegrees } from "./unitConversion";
 
 // Haversine formula to compute the distance between two points (in km) on a globe
 export function haversineDistance(
@@ -95,4 +95,42 @@ export function calcStandardDeviationOfDistancesProbabilities(
   }
 
   return { boundaries, probabilities };
+}
+
+export function getAzimuth(
+  lat1Deg: number,
+  lon1Deg: number,
+  lat2Deg: number,
+  lon2Deg: number
+): number {
+  // 1) Convert degrees -> radians
+  const lat1 = degreesToRadians(lat1Deg);
+  const lon1 = degreesToRadians(lon1Deg);
+  const lat2 = degreesToRadians(lat2Deg);
+  const lon2 = degreesToRadians(lon2Deg);
+
+// 2) Calculate delta longitude in radians
+let deltaLon = lon2 - lon1;
+
+// Force deltaLon into the range -π to π
+if (deltaLon > Math.PI) {
+  deltaLon -= 2 * Math.PI;
+} else if (deltaLon < -Math.PI) {
+  deltaLon += 2 * Math.PI;
+}
+
+
+  // 3) Use the inverse formula for bearing:
+  const y = Math.sin(deltaLon) * Math.cos(lat2);
+  const x =
+    Math.cos(lat1) * Math.sin(lat2) -
+    Math.sin(lat1) * Math.cos(lat2) * Math.cos(deltaLon);
+
+  let bearingRadians = Math.atan2(y, x);
+
+  // 4) Convert radians -> degrees, normalize to [0, 360)
+  let bearingDeg = radiansToDegrees(bearingRadians);
+  bearingDeg = (bearingDeg + 360) % 360;
+
+  return bearingDeg;
 }
