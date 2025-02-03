@@ -143,4 +143,9 @@ describe('Math Conversions', () => {
     expect(result.latDeg).toBeCloseTo(1);
     expect(result.lonDeg).toBeCloseTo(1);
   });
+
+  test('inputValidation', () => {
+    expect(() => radiansToDegrees(NaN)).toThrow('radiansToDegrees expects a valid finite number.');
+  });
+  
 });

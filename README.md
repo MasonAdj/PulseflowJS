@@ -14,6 +14,7 @@ The PulseFlowJS library includes the following core functionality:
 - [Barnes Interpolation](barnesInterpolation.md)
 - [Unit Conversions](unitConversions.md)
 - [Edge Detection](edgeDetection.md)
+- [Binary Search](searchAndSorting.md)
 
 ### 1. **Gaussian Algorithms**
 
@@ -55,10 +56,23 @@ PulseFlowJS provides an extensive set of unit conversion functions across multip
 
 These unit conversion functions ensure that data can be easily transformed to the required units for use in other algorithms or applications.
 
-### 6. **Edge Detection**
+### 6. **Edge Detection for PPM and Canvas ImageData**
 
-Performs Sobel-based edge detection on either P6 PPM data or Canvas ImageData, optionally applying a binary threshold.
+- **Versatile Edge Detection**: Supports both P6 PPM image data (Uint8Array) and Canvas ImageData (RGBA), providing flexibility for various image processing workflows.
+- **Sobel Operator Implementation**: Uses the Sobel edge detection method to compute gradients and identify edges in grayscale-converted images.
+- **Optional Thresholding**: Allows users to apply a binary threshold to edge intensities, ensuring a clear distinction between edges and non-edges.
+- **Canvas Integration**: Returns an ImageData object when processing canvas images, making it easy to visualize edges directly in a `<canvas>`.
+- **PPM Compatibility**: Maintains support for raw PPM image formats, converting them to grayscale and outputting edge-detected PPM data in the same format.
 
+### 7. **Binary Search**
+
+The Comparator type and associated functions provide a robust mechanism for comparing values and performing binary searches within sorted arrays. The defaultComparator function offers out-of-the-box support for numbers and strings, while the binarySearchIterative and binarySearchRecursive functions enable efficient searching, returning all indices of a target value within the array.
+
+- **Comparator Functionality**: Provides a generic comparator type and a default comparator for sorting and searching operations on numbers and strings.
+
+- **Iterative Binary Search**: Efficiently searches for target values in sorted arrays using an iterative approach, returning all matching indices.
+
+- **Recursive Binary Search**: Implements a recursive binary search to locate target values in sorted arrays, ensuring full coverage of duplicate values.
 
 ## Installation
 
@@ -67,3 +81,9 @@ To install PulseFlowJS, use npm:
 ```bash
 npm install pulseflowjs
 ```
+
+## Contributions
+
+To contribute to Pulseflowjs, follow our contributions guide below:
+
+- [Contributions Guide](contributions.md)

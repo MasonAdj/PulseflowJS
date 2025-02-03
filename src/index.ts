@@ -4,8 +4,10 @@ export * from "./cubicInterpolation";
 
 export * from "./unitConversion";
 
-export * from "./mapDistances"
+export * from "./mapDistances";
 
-export * from "./gaussianAlgorithms"
+export * from "./gaussianAlgorithms";
 
-export * from "./edgeDetection"
+export * from "./edgeDetection";
+
+export * from "./searchAndSorting";

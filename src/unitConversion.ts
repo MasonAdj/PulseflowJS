@@ -1,132 +1,146 @@
+// Helper Function for Input Validation
+function validateNumber(value: number, functionName: string): void {
+  if (typeof value !== "number" || !isFinite(value)) {
+    throw new Error(`${functionName} expects a valid finite number.`);
+  }
+}
+
 // Length Conversions
 export function kilometersToMiles(kilometers: number): number {
-  const conversionFactor = 0.621371;
-  return kilometers * conversionFactor;
+  validateNumber(kilometers, "kilometersToMiles");
+  return kilometers * 0.621371;
 }
 
 export function milesToKilometers(miles: number): number {
-  const conversionFactor = 1.60934;
-  return miles * conversionFactor;
+  validateNumber(miles, "milesToKilometers");
+  return miles * 1.60934;
 }
 
 // Speed Conversions
 export function mphToKph(mph: number): number {
-  const conversionFactor = 1.60934;
-  return mph * conversionFactor;
+  validateNumber(mph, "mphToKph");
+  return mph * 1.60934;
 }
 
 export function kphToMph(kph: number): number {
-  const conversionFactor = 0.621371;
-  return kph * conversionFactor;
+  validateNumber(kph, "kphToMph");
+  return kph * 0.621371;
 }
 
 export function knotsToKph(knots: number): number {
-  const conversionFactor = 1.852;
-  return knots * conversionFactor;
+  validateNumber(knots, "knotsToKph");
+  return knots * 1.852;
 }
 
 export function kphToKnots(kph: number): number {
-  const conversionFactor = 1 / 1.852;
-  return kph * conversionFactor;
+  validateNumber(kph, "kphToKnots");
+  return kph / 1.852;
 }
 
 export function mphToKnots(mph: number): number {
-  const conversionFactor = 0.868976;
-  return mph * conversionFactor;
+  validateNumber(mph, "mphToKnots");
+  return mph * 0.868976;
 }
 
 export function knotsToMph(knots: number): number {
-  const conversionFactor = 1.15078;
-  return knots * conversionFactor;
+  validateNumber(knots, "knotsToMph");
+  return knots * 1.15078;
 }
 
 // Temperature Conversions
 export function fahrenheitToCelsius(fahrenheit: number): number {
+  validateNumber(fahrenheit, "fahrenheitToCelsius");
   return ((fahrenheit - 32) * 5) / 9;
 }
 
 export function celsiusToFahrenheit(celsius: number): number {
+  validateNumber(celsius, "celsiusToFahrenheit");
   return (celsius * 9) / 5 + 32;
 }
 
 export function celsiusToKelvin(celsius: number): number {
+  validateNumber(celsius, "celsiusToKelvin");
   return celsius + 273.15;
 }
 
 export function kelvinToCelsius(kelvin: number): number {
+  validateNumber(kelvin, "kelvinToCelsius");
   return kelvin - 273.15;
 }
 
 export function fahrenheitToKelvin(fahrenheit: number): number {
+  validateNumber(fahrenheit, "fahrenheitToKelvin");
   return ((fahrenheit - 32) * 5) / 9 + 273.15;
 }
 
 export function kelvinToFahrenheit(kelvin: number): number {
+  validateNumber(kelvin, "kelvinToFahrenheit");
   return ((kelvin - 273.15) * 9) / 5 + 32;
 }
 
 // Weight Conversions
 export function kgToLbs(kilograms: number): number {
-  const conversionFactor = 2.20462;
-  return kilograms * conversionFactor;
+  validateNumber(kilograms, "kgToLbs");
+  return kilograms * 2.20462;
 }
 
 export function lbsToKg(pounds: number): number {
-  const conversionFactor = 1 / 2.20462;
-  return pounds * conversionFactor;
+  validateNumber(pounds, "lbsToKg");
+  return pounds / 2.20462;
 }
 
 // Distance Conversions
 export function metersToFeet(meters: number): number {
-  const conversionFactor = 3.28084;
-  return meters * conversionFactor;
+  validateNumber(meters, "metersToFeet");
+  return meters * 3.28084;
 }
 
 export function feetToMeters(feet: number): number {
-  const conversionFactor = 1 / 3.28084;
-  return feet * conversionFactor;
+  validateNumber(feet, "feetToMeters");
+  return feet / 3.28084;
 }
 
 // Area Conversions
 export function squareMetersToSquareFeet(squareMeters: number): number {
-  const conversionFactor = 10.7639;
-  return squareMeters * conversionFactor;
+  validateNumber(squareMeters, "squareMetersToSquareFeet");
+  return squareMeters * 10.7639;
 }
 
 export function squareFeetToSquareMeters(squareFeet: number): number {
-  const conversionFactor = 1 / 10.7639;
-  return squareFeet * conversionFactor;
+  validateNumber(squareFeet, "squareFeetToSquareMeters");
+  return squareFeet / 10.7639;
 }
 
 // Volume Conversions
 export function litersToGallons(liters: number): number {
-  const conversionFactor = 0.264172;
-  return liters * conversionFactor;
+  validateNumber(liters, "litersToGallons");
+  return liters * 0.264172;
 }
 
 export function gallonsToLiters(gallons: number): number {
-  const conversionFactor = 1 / 0.264172;
-  return gallons * conversionFactor;
+  validateNumber(gallons, "gallonsToLiters");
+  return gallons / 0.264172;
 }
 
-//Math Conversions
+// Math Conversions
 export function degreesToRadians(degrees: number): number {
-  const conversionFactor = Math.PI / 180; // 1 degree = π/180 radians
-  return degrees * conversionFactor;
+  validateNumber(degrees, "degreesToRadians");
+  return degrees * (Math.PI / 180);
 }
 
 export function radiansToDegrees(radians: number): number {
-  const conversionFactor = 180 / Math.PI; // 1 radian = 180/π degrees
-  return radians * conversionFactor;
+  validateNumber(radians, "radiansToDegrees");
+  return radians * (180 / Math.PI);
 }
 
 export function kilometersToDegrees(
   lat: number,
   distanceKm: number
 ): { latDeg: number; lonDeg: number } {
-  const latDeg = distanceKm / 111; // Convert km to degrees for latitude
+  validateNumber(lat, "kilometersToDegrees (lat)");
+  validateNumber(distanceKm, "kilometersToDegrees (distanceKm)");
 
-  // Calculate the degree increment for longitude at the given latitude
+  const latDeg = distanceKm / 111;
   const lonDeg = distanceKm / (111 * Math.cos(degreesToRadians(lat)));
 
   return { latDeg, lonDeg };

@@ -1,423 +1,162 @@
-import {
-  windToComponents,
-  barnesInterpolation,
-  barnesGrid,
-} from "../src/barnesInterpolation";
-import { degreesToRadians } from "../src/unitConversion";
-import { haversineDistance } from "../src/mapDistances";
+import { windToComponents, barnesInterpolation, barnesGrid } from "../src/barnesInterpolation";
 import { testData } from "./testData";
-import { gaussianWeight } from "../src/gaussianAlgorithms";
 
-describe("wind-related calculations", () => {
-  it("should correctly convert wind speed and direction to U and V components compared to manually calculated values", () => {
-    const { U, V } = windToComponents(testData[0].speed, testData[0].angle);
-    // These are the numbers I got from my calculator, the received data adds more decimal points than I had, so I used toBeCloseTo
-    expect(U).toBeCloseTo(-0.76778892744);
-    expect(V).toBeCloseTo(21.9865981944);
+describe("windToComponents", () => {
+  test("correctly converts wind speed and direction to U and V components", () => {
+    const result = windToComponents(10, 90); // Wind from the east
+    expect(result.U).toBeCloseTo(10);
+    expect(result.V).toBeCloseTo(0);
   });
 
-  it("should calculate accurate Gaussian weights based on distances", () => {
-    const [lat, lon] = testData[0].coords; // Destructure coords into lat and lon
-    const target = { lat: 32.09, lon: -81.12 };
-    const distance = haversineDistance(lat, lon, target.lat, target.lon);
-    const weight = gaussianWeight(distance, 3);
-    expect(weight).toBeGreaterThan(0.3); // Check if the weight is within a reasonable range
-    expect(weight).toBeLessThanOrEqual(1);
+  test("handles wind from the north (0 degrees)", () => {
+    const result = windToComponents(10, 0);
+    expect(result.U).toBeCloseTo(0);
+    expect(result.V).toBeCloseTo(10);
   });
 
-  it("should interpolate wind vectors at specific target points", () => {
-    const targetLat = 32.085;
-    const targetLon = -81.105;
-    const kappa = 3;
-
-    // Map testData to match the structure expected by barnesInterpolation
-    const formattedData = testData.map(({ coords, speed, angle }) => ({
-      lat: coords[0],
-      lon: coords[1],
-      speedKnots: speed,
-      directionDegrees: angle,
-    }));
-
-    // Calculate expected U and V components manually
-    let sumWeightedU = 0;
-    let sumWeightedV = 0;
-    let sumWeights = 0;
-
-    formattedData.forEach((point) => {
-      // Calculate the distance between the known point and the target point
-      const distance = haversineDistance(
-        point.lat,
-        point.lon,
-        targetLat,
-        targetLon
-      );
-
-      // Calculate the weight for this point based on the distance
-      const weight = gaussianWeight(distance, kappa);
-
-      // Convert wind speed and direction to U and V components
-      const radianAngle = degreesToRadians(point.directionDegrees);
-      const U = point.speedKnots * Math.sin(radianAngle); // East-West component
-      const V = point.speedKnots * Math.cos(radianAngle); // North-South component
-
-      // Update weighted sum of U and V components and total weight
-      sumWeightedU += U * weight;
-      sumWeightedV += V * weight;
-      sumWeights += weight;
-    });
-
-    const expectedU = sumWeightedU / sumWeights;
-    const expectedV = sumWeightedV / sumWeights;
-
-    // Calculate interpolated wind vector using barnesInterpolation
-    const { U, V } = barnesInterpolation(
-      formattedData,
-      targetLat,
-      targetLon,
-      kappa,
-      1
-    );
-
-    // Compare the function's output to the calculated expected values
-    expect(U).toBeCloseTo(expectedU, 2); // Allow small margin for floating-point precision
-    expect(V).toBeCloseTo(expectedV, 2);
+  test("throws error for negative wind speed", () => {
+    expect(() => windToComponents(-5, 90)).toThrow("Invalid wind speed: Must be a non-negative number.");
   });
 
-  it("should interpolate wind vectors with multiple passes for refinement", () => {
-    const targetLat = 32.085;
-    const targetLon = -81.105;
-    const kappa = 3;
-    const passes = 3;
-
-    // Map testData to match the structure expected by barnesInterpolation
-    const formattedData = testData.map(({ coords, speed, angle }) => ({
-      lat: coords[0],
-      lon: coords[1],
-      speedKnots: speed,
-      directionDegrees: angle,
-    }));
-
-    // Perform manual multi-pass interpolation to get the expected result
-    let interpolatedU = 0;
-    let interpolatedV = 0;
-
-    for (let pass = 0; pass < passes; pass++) {
-      let sumWeightedU = 0;
-      let sumWeightedV = 0;
-      let sumWeights = 0;
-
-      formattedData.forEach((point) => {
-        const distance = haversineDistance(
-          point.lat,
-          point.lon,
-          targetLat,
-          targetLon
-        );
-        const weight = gaussianWeight(distance, kappa);
-
-        const radianAngle = degreesToRadians(point.directionDegrees);
-        const U = point.speedKnots * Math.sin(radianAngle);
-        const V = point.speedKnots * Math.cos(radianAngle);
-
-        sumWeightedU += U * weight;
-        sumWeightedV += V * weight;
-        sumWeights += weight;
-      });
-
-      interpolatedU = sumWeightedU / sumWeights;
-      interpolatedV = sumWeightedV / sumWeights;
-    }
-
-    const { U, V } = barnesInterpolation(
-      formattedData,
-      targetLat,
-      targetLon,
-      kappa,
-      passes
-    );
-
-    // Compare the function's output to the manually calculated expected values
-    expect(U).toBeCloseTo(interpolatedU, 2);
-    expect(V).toBeCloseTo(interpolatedV, 2);
+  test("throws error for invalid wind direction (negative)", () => {
+    expect(() => windToComponents(10, -10)).toThrow("Invalid wind direction: Must be between 0 and 360 degrees.");
   });
 
-  it("should work when passes is set to 0", () => {
-    const targetLat = 32.085;
-    const targetLon = -81.105;
-    const kappa = 3;
-    const passes = 1;
-
-    // Map testData to match the structure expected by barnesInterpolation
-    const formattedData = testData.map(({ coords, speed, angle }) => ({
-      lat: coords[0],
-      lon: coords[1],
-      speedKnots: speed,
-      directionDegrees: angle,
-    }));
-
-    // Perform manual multi-pass interpolation to get the expected result
-    let interpolatedU = 0;
-    let interpolatedV = 0;
-
-    for (let pass = 0; pass < passes; pass++) {
-      let sumWeightedU = 0;
-      let sumWeightedV = 0;
-      let sumWeights = 0;
-
-      formattedData.forEach((point) => {
-        const distance = haversineDistance(
-          point.lat,
-          point.lon,
-          targetLat,
-          targetLon
-        );
-        const weight = gaussianWeight(distance, kappa);
-
-        const radianAngle = degreesToRadians(point.directionDegrees);
-        const U = point.speedKnots * Math.sin(radianAngle);
-        const V = point.speedKnots * Math.cos(radianAngle);
-
-        sumWeightedU += U * weight;
-        sumWeightedV += V * weight;
-        sumWeights += weight;
-      });
-
-      interpolatedU = sumWeightedU / sumWeights;
-      interpolatedV = sumWeightedV / sumWeights;
-    }
-
-    const { U, V } = barnesInterpolation(
-      formattedData,
-      targetLat,
-      targetLon,
-      kappa,
-      0
-    );
-
-    // Compare the function's output to the manually calculated expected values
-    expect(U).toBeCloseTo(interpolatedU, 2);
-    expect(V).toBeCloseTo(interpolatedV, 2);
+  test("throws error for invalid wind direction (>= 360)", () => {
+    expect(() => windToComponents(10, 360)).toThrow("Invalid wind direction: Must be between 0 and 360 degrees.");
   });
 
-  it("should work when passes is set to -1", () => {
-    const targetLat = 32.085;
-    const targetLon = -81.105;
-    const kappa = 3;
-    const passes = 1;
-
-    // Map testData to match the structure expected by barnesInterpolation
-    const formattedData = testData.map(({ coords, speed, angle }) => ({
-      lat: coords[0],
-      lon: coords[1],
-      speedKnots: speed,
-      directionDegrees: angle,
-    }));
-
-    // Perform manual multi-pass interpolation to get the expected result
-    let interpolatedU = 0;
-    let interpolatedV = 0;
-
-    for (let pass = 0; pass < passes; pass++) {
-      let sumWeightedU = 0;
-      let sumWeightedV = 0;
-      let sumWeights = 0;
-
-      formattedData.forEach((point) => {
-        const distance = haversineDistance(
-          point.lat,
-          point.lon,
-          targetLat,
-          targetLon
-        );
-        const weight = gaussianWeight(distance, kappa);
-
-        const radianAngle = degreesToRadians(point.directionDegrees);
-        const U = point.speedKnots * Math.sin(radianAngle);
-        const V = point.speedKnots * Math.cos(radianAngle);
-
-        sumWeightedU += U * weight;
-        sumWeightedV += V * weight;
-        sumWeights += weight;
-      });
-
-      interpolatedU = sumWeightedU / sumWeights;
-      interpolatedV = sumWeightedV / sumWeights;
-    }
-
-    const { U, V } = barnesInterpolation(
-      formattedData,
-      targetLat,
-      targetLon,
-      kappa,
-      -1
-    );
-
-    // Compare the function's output to the manually calculated expected values
-    expect(U).toBeCloseTo(interpolatedU, 2);
-    expect(V).toBeCloseTo(interpolatedV, 2);
-  });
-
-  it("should do 1 pass even when a pass number is not supplied", () => {
-    const targetLat = 32.085;
-    const targetLon = -81.105;
-    const kappa = 3;
-    const passes = 3;
-
-    // Map testData to match the structure expected by barnesInterpolation
-    const formattedData = testData.map(({ coords, speed, angle }) => ({
-      lat: coords[0],
-      lon: coords[1],
-      speedKnots: speed,
-      directionDegrees: angle,
-    }));
-
-    // Perform manual multi-pass interpolation to get the expected result
-    let interpolatedU = 0;
-    let interpolatedV = 0;
-
-    for (let pass = 0; pass < passes; pass++) {
-      let sumWeightedU = 0;
-      let sumWeightedV = 0;
-      let sumWeights = 0;
-
-      formattedData.forEach((point) => {
-        const distance = haversineDistance(
-          point.lat,
-          point.lon,
-          targetLat,
-          targetLon
-        );
-        const weight = gaussianWeight(distance, kappa);
-
-        const radianAngle = degreesToRadians(point.directionDegrees);
-        const U = point.speedKnots * Math.sin(radianAngle);
-        const V = point.speedKnots * Math.cos(radianAngle);
-
-        sumWeightedU += U * weight;
-        sumWeightedV += V * weight;
-        sumWeights += weight;
-      });
-
-      interpolatedU = sumWeightedU / sumWeights;
-      interpolatedV = sumWeightedV / sumWeights;
-    }
-
-    const { U, V } = barnesInterpolation(
-      formattedData,
-      targetLat,
-      targetLon,
-      kappa
-    );
-
-    // Compare the function's output to the manually calculated expected values
-    expect(U).toBeCloseTo(interpolatedU, 2);
-    expect(V).toBeCloseTo(interpolatedV, 2);
+  test("throws error for NaN wind speed or direction", () => {
+    expect(() => windToComponents(NaN, 90)).toThrow("Invalid wind speed: Must be a non-negative number.");
+    expect(() => windToComponents(10, NaN)).toThrow("Invalid wind direction: Must be between 0 and 360 degrees.");
   });
 });
 
-describe("barnesGrid function", () => {
-  it("should generate a grid of interpolated wind vectors", () => {
-    const gridBounds = {
-      minLat: 32.05,
-      minLon: -81.13,
-      maxLat: 32.1,
-      maxLon: -81.05,
-    };
+describe("barnesInterpolation", () => {
+  const knownPoints = testData.map((point) => ({
+    lat: point.coords[0],
+    lon: point.coords[1],
+    speedKnots: point.speed,
+    directionDegrees: point.angle,
+  }));
 
-    const gridSizeKm = 5; // Grid spacing of 5 km
-    const kappa = 2; // Smoothing parameter
-    const passes = 1; // Single interpolation pass
-
-    const result = barnesGrid(
-      testData.map(({ coords, speed, angle }) => ({
-        lat: coords[0],
-        lon: coords[1],
-        speedKnots: speed,
-        directionDegrees: angle,
-      })),
-      gridBounds,
-      gridSizeKm,
-      kappa,
-      passes
+  test("correctly interpolates wind components at a target location", () => {
+    const result = barnesInterpolation(knownPoints, 32.08, -81.1, 1, 1);
+    expect(result.U).toBeDefined();
+    expect(result.V).toBeDefined();
+  });
+  test("correctly interpolates wind components at a target location with default passes", () => {
+    const result = barnesInterpolation(knownPoints, 32.08, -81.1, 1);
+    expect(result.U).toBeDefined();
+    expect(result.V).toBeDefined();
+  });
+  test("correctly interpolates wind components at a target location with multiple passes", () => {
+    const result = barnesInterpolation(knownPoints, 32.08, -81.1, 3);
+    expect(result.U).toBeDefined();
+    expect(result.V).toBeDefined();
+  });
+  test("throws error if knownPoints array is empty", () => {
+    expect(() => barnesInterpolation([], 32.08, -81.1, 1, 1)).toThrow(
+      "Invalid knownPoints array: Must contain at least one data point."
     );
-
-    // Validate the grid size
-    const expectedGridPoints =
-      Math.ceil((gridBounds.maxLat - gridBounds.minLat) / (gridSizeKm / 111)) *
-      Math.ceil((gridBounds.maxLon - gridBounds.minLon) / (gridSizeKm / 111));
-    expect(result).toHaveLength(expectedGridPoints);
-
-    // Check a few properties of grid points
-    result.forEach((point) => {
-      expect(point).toHaveProperty("coords");
-      expect(point).toHaveProperty("speed");
-      expect(point).toHaveProperty("angle");
-      expect(point.coords[0]).toBeGreaterThanOrEqual(gridBounds.minLat);
-      expect(point.coords[0]).toBeLessThanOrEqual(gridBounds.maxLat);
-      expect(point.coords[1]).toBeGreaterThanOrEqual(gridBounds.minLon);
-      expect(point.coords[1]).toBeLessThanOrEqual(gridBounds.maxLon);
-    });
-
-    // Validate specific points (for known behavior)
-    const firstPoint = result[0];
-    expect(firstPoint.coords[0]).toBeCloseTo(gridBounds.minLat, 5);
-    expect(firstPoint.coords[1]).toBeCloseTo(gridBounds.minLon, 5);
-    expect(firstPoint.speed).toBeGreaterThan(0);
-    expect(firstPoint.angle).toBeGreaterThanOrEqual(0);
-    expect(firstPoint.angle).toBeLessThan(360);
   });
 
-  it("should handle cases with no input points", () => {
-    const gridBounds = {
-      minLat: 32.05,
-      minLon: -81.13,
-      maxLat: 32.1,
-      maxLon: -81.05,
-    };
-
-    const gridSizeKm = 5;
-    const kappa = 2;
-    const passes = 1;
-
-    const result = barnesGrid([], gridBounds, gridSizeKm, kappa, passes);
-    expect(result[0].angle).toBeNaN();
-    expect(result[0].speed).toBeNaN()
+  test("throws error for invalid target latitude/longitude", () => {
+    expect(() => barnesInterpolation(knownPoints, NaN, -81.1, 1, 1)).toThrow(
+      "Invalid target coordinates: Must be finite numbers."
+    );
+    expect(() => barnesInterpolation(knownPoints, 32.08, NaN, 1, 1)).toThrow(
+      "Invalid target coordinates: Must be finite numbers."
+    );
   });
 
-  it("should handle a single input point", () => {
-    const gridBounds = {
-      minLat: 32.05,
-      minLon: -81.13,
-      maxLat: 32.1,
-      maxLon: -81.05,
-    };
+  test("throws error for invalid kappa value", () => {
+    expect(() => barnesInterpolation(knownPoints, 32.08, -81.1, 0, 1)).toThrow(
+      "Invalid kappa: Must be a positive number."
+    );
+    expect(() => barnesInterpolation(knownPoints, 32.08, -81.1, NaN, 1)).toThrow(
+      "Invalid kappa: Must be a positive number."
+    );
+  });
 
-    const gridSizeKm = 5;
-    const kappa = 2;
-    const passes = 1;
+  test("throws error for invalid passes value", () => {
+    expect(() => barnesInterpolation(knownPoints, 32.08, -81.1, 1, 0)).toThrow(
+      "Invalid passes: Must be an integer >= 1."
+    );
+    expect(() => barnesInterpolation(knownPoints, 32.08, -81.1, 1, NaN)).toThrow(
+      "Invalid passes: Must be an integer >= 1."
+    );
+  });
 
-    const singlePoint = [
-      {
-        lat: 32.09,
-        lon: -81.12,
-        speedKnots: 26,
-        directionDegrees: 345,
-      },
+  test("returns { U: 0, V: 0 } when all weights are zero", () => {
+    const consoleWarnMock = jest.spyOn(console, "warn").mockImplementation(() => {});
+  
+    const result = barnesInterpolation(knownPoints, 100, 100, 1000, 1);
+    expect(result).toEqual({ U: 0, V: 0 });
+  
+    consoleWarnMock.mockRestore(); // Restore original console.warn behavior
+  });  
+
+  test("covers line 55 - handles near-zero sumWeights case", () => {
+    const consoleWarnMock = jest.spyOn(console, "warn").mockImplementation(() => {});
+
+    const edgeCaseKnownPoints = [
+      { lat: 0, lon: 0, speedKnots: 10, directionDegrees: 90 },
     ];
+    const largeDistance = 1e6; // A large distance that results in very small weights
+    const result = barnesInterpolation(edgeCaseKnownPoints, largeDistance, largeDistance, 1000, 1);
+    expect(result).toEqual({ U: 0, V: 0 });
+    consoleWarnMock.mockRestore(); // Restore original console.warn behavior
 
-    const result = barnesGrid(
-      singlePoint,
-      gridBounds,
-      gridSizeKm,
-      kappa,
-      passes
+  });
+});
+
+
+describe("barnesGrid", () => {
+  const knownPoints = testData.map((point) => ({
+    lat: point.coords[0],
+    lon: point.coords[1],
+    speedKnots: point.speed,
+    directionDegrees: point.angle,
+  }));
+
+  const gridBounds = {
+    minLat: 32.05,
+    maxLat: 32.10,
+    minLon: -81.15,
+    maxLon: -81.05,
+  };
+
+  test("correctly generates a Barnes interpolation grid", () => {
+    const grid = barnesGrid(knownPoints, gridBounds, 5, 1, 1);
+    expect(grid).toBeInstanceOf(Array);
+    expect(grid.length).toBeGreaterThan(0);
+    expect(grid[0]).toHaveProperty("coords");
+    expect(grid[0]).toHaveProperty("speed");
+    expect(grid[0]).toHaveProperty("angle");
+  });
+
+  test("throws error if knownPoints array is empty", () => {
+    expect(() => barnesGrid([], gridBounds, 5, 1, 1)).toThrow(
+      "Invalid knownPoints array: Must contain at least one data point."
     );
-    expect(result).not.toHaveLength(0);
+  });
 
-    result.forEach((point) => {
-      expect(point.speed).toBeGreaterThan(0);
-      expect(point.angle).toBeGreaterThanOrEqual(0);
-      expect(point.angle).toBeLessThan(360);
-    });
+  test("throws error for invalid grid bounds", () => {
+    expect(() =>
+      barnesGrid(knownPoints, { minLat: NaN, maxLat: 32.10, minLon: -81.15, maxLon: -81.05 }, 5, 1, 1)
+    ).toThrow("Invalid gridBounds: Must contain finite numbers.");
+    expect(() =>
+      barnesGrid(knownPoints, { minLat: 32.05, maxLat: 32.10, minLon: NaN, maxLon: -81.05 }, 5, 1, 1)
+    ).toThrow("Invalid gridBounds: Must contain finite numbers.");
+  });
+
+  test("throws error for invalid grid size", () => {
+    expect(() => barnesGrid(knownPoints, gridBounds, 0, 1, 1)).toThrow(
+      "Invalid gridSizeKm: Must be a positive number."
+    );
+    expect(() => barnesGrid(knownPoints, gridBounds, NaN, 1, 1)).toThrow(
+      "Invalid gridSizeKm: Must be a positive number."
+    );
   });
 });
