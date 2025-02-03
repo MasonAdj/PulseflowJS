@@ -1,4 +1,8 @@
-import { degreesToRadians, kilometersToDegrees, radiansToDegrees } from "./unitConversion";
+import {
+  degreesToRadians,
+  kilometersToDegrees,
+  radiansToDegrees,
+} from "./unitConversion";
 
 // Haversine formula to compute the distance between two points (in km) on a globe
 export function haversineDistance(
@@ -19,8 +23,12 @@ export function haversineDistance(
   return R * c;
 }
 
-// Function to generate random points within a given radius
-export function generateRandomPoint(lat: number, lon: number, radiusKm: number): { lat: number, lon: number } {
+// Generate random points within a given radius
+export function generateRandomPoint(
+  lat: number,
+  lon: number,
+  radiusKm: number
+): { lat: number; lon: number } {
   // Use kilometersToDegrees to convert radius in kilometers to degrees
   const { latDeg, lonDeg } = kilometersToDegrees(lat, radiusKm);
 
@@ -30,7 +38,7 @@ export function generateRandomPoint(lat: number, lon: number, radiusKm: number):
   const w = latDeg * Math.sqrt(u); // Use latitude degree equivalent of the radius
   const t = 2 * Math.PI * v;
   const offsetLat = w * Math.cos(t);
-  const offsetLon = w * Math.sin(t) / Math.cos(degreesToRadians(lat));
+  const offsetLon = (w * Math.sin(t)) / Math.cos(degreesToRadians(lat));
 
   return {
     lat: lat + offsetLat,
@@ -38,22 +46,42 @@ export function generateRandomPoint(lat: number, lon: number, radiusKm: number):
   };
 }
 
-export function calcStandardDeviationOfDistances(lat: number, lon: number, radiusKm: number, numPoints: number): { distances: number[], mean: number, boundaries: number[] } {
+export function calcStandardDeviationOfDistances(
+  lat: number,
+  lon: number,
+  radiusKm: number,
+  numPoints: number
+): { distances: number[]; mean: number; boundaries: number[] } {
   const distances: number[] = [];
 
   for (let i = 0; i < numPoints; i++) {
     const randomPoint = generateRandomPoint(lat, lon, radiusKm);
-    const distance = haversineDistance(lat, lon, randomPoint.lat, randomPoint.lon);
+    const distance = haversineDistance(
+      lat,
+      lon,
+      randomPoint.lat,
+      randomPoint.lon
+    );
     distances.push(distance);
   }
 
-  const mean = distances.reduce((sum, distance) => sum + distance, 0) / distances.length;
-  const squaredDifferences = distances.map(distance => (distance - mean) ** 2);
-  const variance = squaredDifferences.reduce((sum, sqDiff) => sum + sqDiff, 0) / distances.length;
+  const mean =
+    distances.reduce((sum, distance) => sum + distance, 0) / distances.length;
+  const squaredDifferences = distances.map(
+    (distance) => (distance - mean) ** 2
+  );
+  const variance =
+    squaredDifferences.reduce((sum, sqDiff) => sum + sqDiff, 0) /
+    distances.length;
   const standardDeviation = Math.sqrt(variance);
 
   // Marking boundaries at 1σ, 2σ, and 3σ from the mean
-  const boundaries = [mean, mean + standardDeviation, mean + 2 * standardDeviation, mean + 3 * standardDeviation];
+  const boundaries = [
+    mean,
+    mean + standardDeviation,
+    mean + 2 * standardDeviation,
+    mean + 3 * standardDeviation,
+  ];
 
   return { distances, mean, boundaries };
 }
@@ -62,32 +90,52 @@ export function calcStandardDeviationOfDistancesProbabilities(
   lon: number,
   radiusKm: number,
   numPoints: number
-): { boundaries: number[], probabilities: number[] } {
+): { boundaries: number[]; probabilities: number[] } {
   const distances: number[] = [];
 
   // Generate random distances from the center
   for (let i = 0; i < numPoints; i++) {
     const randomPoint = generateRandomPoint(lat, lon, radiusKm);
-    const distance = haversineDistance(lat, lon, randomPoint.lat, randomPoint.lon);
+    const distance = haversineDistance(
+      lat,
+      lon,
+      randomPoint.lat,
+      randomPoint.lon
+    );
     distances.push(distance);
   }
 
   // Sort distances to make it easier to count points within boundaries
   distances.sort((a, b) => a - b);
 
-  const mean = distances.reduce((sum, distance) => sum + distance, 0) / distances.length;
-  const squaredDifferences = distances.map(distance => (distance - mean) ** 2);
-  const variance = squaredDifferences.reduce((sum, sqDiff) => sum + sqDiff, 0) / distances.length;
+  const mean =
+    distances.reduce((sum, distance) => sum + distance, 0) / distances.length;
+  const squaredDifferences = distances.map(
+    (distance) => (distance - mean) ** 2
+  );
+  const variance =
+    squaredDifferences.reduce((sum, sqDiff) => sum + sqDiff, 0) /
+    distances.length;
   const standardDeviation = Math.sqrt(variance);
 
   // Calculate the boundaries at mean, mean + 1σ, mean + 2σ, mean + 3σ
-  const boundaries = [mean, mean + standardDeviation, mean + 2 * standardDeviation, mean + 3 * standardDeviation];
+  const boundaries = [
+    mean,
+    mean + standardDeviation,
+    mean + 2 * standardDeviation,
+    mean + 3 * standardDeviation,
+  ];
 
   // Calculate probabilities for each ring
   const probabilities: number[] = [];
   for (let i = 0; i < boundaries.length; i++) {
-    const pointsInCurrentCircle = distances.filter(distance => distance <= boundaries[i]).length;
-    const pointsInPreviousCircle = i > 0 ? distances.filter(distance => distance <= boundaries[i - 1]).length : 0;
+    const pointsInCurrentCircle = distances.filter(
+      (distance) => distance <= boundaries[i]
+    ).length;
+    const pointsInPreviousCircle =
+      i > 0
+        ? distances.filter((distance) => distance <= boundaries[i - 1]).length
+        : 0;
     const pointsInRing = pointsInCurrentCircle - pointsInPreviousCircle;
 
     const probability = (pointsInRing / numPoints) * 100;
@@ -109,16 +157,15 @@ export function getAzimuth(
   const lat2 = degreesToRadians(lat2Deg);
   const lon2 = degreesToRadians(lon2Deg);
 
-// 2) Calculate delta longitude in radians
-let deltaLon = lon2 - lon1;
+  // 2) Calculate delta longitude in radians
+  let deltaLon = lon2 - lon1;
 
-// Force deltaLon into the range -π to π
-if (deltaLon > Math.PI) {
-  deltaLon -= 2 * Math.PI;
-} else if (deltaLon < -Math.PI) {
-  deltaLon += 2 * Math.PI;
-}
-
+  // Force deltaLon into the range -π to π
+  if (deltaLon > Math.PI) {
+    deltaLon -= 2 * Math.PI;
+  } else if (deltaLon < -Math.PI) {
+    deltaLon += 2 * Math.PI;
+  }
 
   // 3) Use the inverse formula for bearing:
   const y = Math.sin(deltaLon) * Math.cos(lat2);

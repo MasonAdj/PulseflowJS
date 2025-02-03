@@ -31,22 +31,22 @@ export function kphToKnots(kph: number): number {
 }
 
 export function mphToKnots(mph: number): number {
-  const conversionFactor = 0.868976; // 1 mph = 0.868976 knots
+  const conversionFactor = 0.868976;
   return mph * conversionFactor;
 }
 
 export function knotsToMph(knots: number): number {
-  const conversionFactor = 1.15078; // 1 knot = 1.15078 mph
+  const conversionFactor = 1.15078;
   return knots * conversionFactor;
 }
 
 // Temperature Conversions
 export function fahrenheitToCelsius(fahrenheit: number): number {
-  return (fahrenheit - 32) * 5 / 9;
+  return ((fahrenheit - 32) * 5) / 9;
 }
 
 export function celsiusToFahrenheit(celsius: number): number {
-  return (celsius * 9 / 5) + 32;
+  return (celsius * 9) / 5 + 32;
 }
 
 export function celsiusToKelvin(celsius: number): number {
@@ -58,11 +58,11 @@ export function kelvinToCelsius(kelvin: number): number {
 }
 
 export function fahrenheitToKelvin(fahrenheit: number): number {
-  return (fahrenheit - 32) * 5 / 9 + 273.15;
+  return ((fahrenheit - 32) * 5) / 9 + 273.15;
 }
 
 export function kelvinToFahrenheit(kelvin: number): number {
-  return (kelvin - 273.15) * 9 / 5 + 32;
+  return ((kelvin - 273.15) * 9) / 5 + 32;
 }
 
 // Weight Conversions
@@ -120,7 +120,10 @@ export function radiansToDegrees(radians: number): number {
   return radians * conversionFactor;
 }
 
-export function kilometersToDegrees(lat: number, distanceKm: number): { latDeg: number; lonDeg: number } {
+export function kilometersToDegrees(
+  lat: number,
+  distanceKm: number
+): { latDeg: number; lonDeg: number } {
   const latDeg = distanceKm / 111; // Convert km to degrees for latitude
 
   // Calculate the degree increment for longitude at the given latitude
